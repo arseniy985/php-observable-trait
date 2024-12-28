@@ -1,5 +1,5 @@
 # Механизм наблюдателей вызова методов
-Реализовал трейт Observable при добавлении которого у класса появляется реализация этого интерфейса:
+Реализовал трейт app\Traits\Observable при добавлении которого у класса появляется реализация этого интерфейса:
 ```php
 interface IVisitor
 {
@@ -18,5 +18,32 @@ interface IObserver
 }
 ```
 ## ВАЖНО!
-Все методы, которые будут отслеживаться должны быть protected! Необходимо для видимости их из трейта.
+Все методы, которые будут отслеживаться должны быть protected! Необходимо для видимости их из трейта.  
 При этом для того чтобы они не отслеживались, они должны быть public
+
+Пример в index.php
+```php
+class TestObserver implements IObserver
+{
+    public function onUpdate(): void {
+        echo self::class . ' отработал';
+    }
+}
+
+class TestVisitor implements IVisitor
+{
+    use Observable;
+    protected function test(): void
+    {
+        echo self::class . '->test()' . PHP_EOL;
+    }
+}
+
+$visitor = new TestVisitor();
+$visitor->attach(new TestObserver());
+
+$visitor->test();
+//Выводит
+//TestVisitor->test()
+//TestObserver отработал
+```
